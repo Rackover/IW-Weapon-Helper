@@ -647,7 +647,7 @@ namespace IW_WEAPON_HELPER.Model
             string headerData = string.Join(Environment.NewLine, allLines.Take(allLines.Length - 1)) + Environment.NewLine + lastLine.Substring(0, definitionStart);
 
             var statsArr = definitionLine.Split('\\');
-            var weapon = new Weapon(headerData.Substring(1)); // Just removing the slight "/" at the end of headerdata - we won't need it
+            var weapon = new Weapon(headerData.Substring(0, headerData.Length-1)); // Just removing the slight "/" at the end of headerdata - we won't need it
             var properties = typeof(Weapon).GetFields();
 
             for (int i = 0; i < statsArr.Length - 1; i += 2)

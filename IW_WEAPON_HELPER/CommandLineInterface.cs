@@ -74,27 +74,20 @@ rackover@louve.systems (2020)";
 
                     if (commands.TryGetValue(typedCommand.ToUpper(), out Command command))
                     {
-                        /*
                         try
                         {
-                        */
                             if (!command.Execute(this, arguments, out typedCommand))
                             {
                                 typedCommand = string.Empty;
                             }
-                        /*
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
-                            Err("Please make sure all given paths are enclosed with \" characters. Execution stopped.");
-                            typedCommand = string.Empty;
+
                         }
                         catch(Exception e)
                         {
                             Err(e.ToString());
                             typedCommand = string.Empty;
                         }
-                        */
+
                         Log();
                     }
                     else

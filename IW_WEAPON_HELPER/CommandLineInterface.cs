@@ -34,6 +34,8 @@ rackover@louve.systems (2020)";
 
         public CommandLineInterface(params string[] args)
         {
+            Console.Title = "IW4 WEAPON HELPER CLI";
+
             commands.Add("HELP", new Controller.Help());
             commands.Add("PATH", new Controller.Path());
             commands.Add("EXIT", new Controller.Exit());
@@ -74,19 +76,22 @@ rackover@louve.systems (2020)";
 
                     if (commands.TryGetValue(typedCommand.ToUpper(), out Command command))
                     {
+#if DEBUG
                         try
                         {
+#endif
                             if (!command.Execute(this, arguments, out typedCommand))
                             {
                                 typedCommand = string.Empty;
                             }
-
+#if DEBUG
                         }
                         catch(Exception e)
                         {
                             Err(e.ToString());
                             typedCommand = string.Empty;
                         }
+#endif
 
                         Log();
                     }

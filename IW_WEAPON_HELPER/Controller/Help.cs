@@ -15,7 +15,14 @@ namespace IW_WEAPON_HELPER.Controller
         {
             var commands = cli.Commands;
             foreach (var command in commands) {
-                cli.Log($"{command.name}{(command.command.HelpfulArguments == string.Empty ? string.Empty : $" {command.command.HelpfulArguments} ")} => {command.command.HelpMessage}");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"    {command.name}");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write($"{(command.command.HelpfulArguments == string.Empty ? string.Empty : $" {command.command.HelpfulArguments}")}");
+                Console.Write(" => ");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(command.command.HelpMessage);
+                Console.WriteLine();
             }
             remainder = arguments;
             return true;

@@ -9,12 +9,18 @@ namespace IW_WEAPON_HELPER.Controller
 {
     class Load : Command
     {
-        public override string HelpMessage => "Loads a rawfile (IWD) in memory";
-        public override string HelpfulArguments => "<path/to/raw/file>";
+        public override string HelpMessage => "Loads an IWD in memory";
+        public override string HelpfulArguments => "<path/to/iwd/file>";
 
         public override bool Execute(CommandLineInterface cli, string arguments, out string remainder)
         {
             string rawFilePath = CommandLineInterface.GetFirstString(arguments, out remainder);
+
+            if (rawFilePath.Length == 0)
+            {
+                cli.Err("Please specify a path to load.");
+                return false;
+            }
 
             try
             {

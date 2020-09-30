@@ -95,6 +95,7 @@ rackover@louve.systems (2020)";
                             typedCommand = string.Empty;
                         }
                         */
+                        Log();
                     }
                     else
                     {

@@ -10,12 +10,23 @@ namespace IW_WEAPON_HELPER.Controller
     class Export : Command
     {
         public override string HelpMessage => "Exports the given weapon to either XML or JSON";
-        public override string HelpfulArguments => $"<path/to/weapon/inside/rawfile> <format>";
+        public override string HelpfulArguments => $"<path/to/weapon/inside/iwd> <format>";
 
         public override bool Execute(CommandLineInterface cli, string arguments, out string remainder)
         {
             string weaponPath = CommandLineInterface.GetFirstString(arguments, out remainder);
-            string format = CommandLineInterface.GetFirstString(remainder, out remainder); 
+            if (weaponPath.Length == 0)
+            {
+                cli.Err("Please specify a weapon path to export");
+                return false;
+            }
+
+            string format = CommandLineInterface.GetFirstString(remainder, out remainder);
+            if (format.Length == 0)
+            {
+                cli.Err("Please specify a format for the exported file, either XML or JSON");
+                return false;
+            }
 
             /*
             if (arguments.Length <= secondMarker + 1)
@@ -36,7 +47,7 @@ namespace IW_WEAPON_HELPER.Controller
                 var entry = cli.currentRawFile.GetEntry(weaponPath); 
                 if (entry == null)
                 {
-                    cli.Err($"Could not find the file {weaponPath} in loaded rawfile");
+                    cli.Err($"Could not find the file {weaponPath} in loaded iwd file");
                     return false;
                 }
                 else

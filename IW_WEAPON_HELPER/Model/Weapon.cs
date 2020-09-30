@@ -446,12 +446,14 @@ namespace IW_WEAPON_HELPER.Model
         public string ammoCounterClip = null;
         public string ammoCounterIcon = null;
         public string ammoCounterIconRatio = null;
+        public string ammoName = null;
         public string ammoPickupSound = null;
         public string ammoPickupSoundPlayer = null;
         public string bounceSound = null;
         public string breachRaiseAnim = null;
         public string breachRaiseAnimL = null;
         public string breachRaiseAnimR = null;
+        public string clipName = null;
         public string detonateSound = null;
         public string detonateSoundPlayer = null;
         public string dpadIcon = null;
@@ -665,7 +667,7 @@ namespace IW_WEAPON_HELPER.Model
                 try
                 {
                     var property = validProperties.First();
-                    if (property.FieldType == typeof(bool?)) property.SetValue(weapon, value.ToString().Equals("0") ? false : true);
+                    if (property.FieldType == typeof(bool?)) property.SetValue(weapon, !value.ToString().Equals("0"));
                     else if (property.FieldType == typeof(float?)) property.SetValue(weapon, float.TryParse(value, out float fValue) ? (float?)fValue : null);
                     else property.SetValue(weapon, value.ToString());
 
@@ -706,7 +708,7 @@ namespace IW_WEAPON_HELPER.Model
                 if (propertyInfo.GetValue(this) == null) continue;
 
                 propertyLineBuilder.Add(propertyInfo.Name);
-                propertyLineBuilder.Add(propertyInfo.GetValue(this).ToString());
+                propertyLineBuilder.Add((propertyInfo.FieldType == typeof(bool?) ? Convert.ToByte(((bool?)propertyInfo.GetValue(this)).Value) : propertyInfo.GetValue(this)).ToString());
             }
 
             headerData = propertyLineBuilder[0];

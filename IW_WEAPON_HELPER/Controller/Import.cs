@@ -10,12 +10,12 @@ namespace IW_WEAPON_HELPER.Controller
     class Import : Command
     {
         public override string HelpMessage => "Imports the given weapon from either XML or JSON";
-        public override string HelpfulArguments => $@"{"\""}<path\to\weapon\file.json/xml>{"\""}";
+        public override string HelpfulArguments => $"<path/to/exported/file> <path/in/raw/file>";
 
         public override bool Execute(CommandLineInterface cli, string arguments, out string remainder)
         {
-            string weaponPath = arguments.Split('"')[1];
-            remainder = arguments.Substring(arguments.IndexOf('"', arguments.IndexOf('"')+1)+1);
+            string weaponPath = CommandLineInterface.GetFirstString(arguments, out remainder);
+            string writePath = CommandLineInterface.GetFirstString(remainder, out remainder);
 
             Model.Weapon weapon;
             if (!File.Exists(weaponPath))
@@ -40,12 +40,27 @@ namespace IW_WEAPON_HELPER.Controller
                     return false;
             }
 
-            var finalPath = Path.Combine(Path.GetDirectoryName(weaponPath), Path.GetFileNameWithoutExtension(weaponPath));
+            var finalPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(weaponPath), System.IO.Path.GetFileNameWithoutExtension(weaponPath));
             var contents = weapon.SerializeToIW();
 
-            File.WriteAllText(finalPath, contents);
+            if (cli.currentRawFile == null)
+            {
+                File.WriteAllText(finalPath, contents);
+            }
+            else
+            {
+                cli.currentRawFile.GetEntry(writePath).Delete();
+                var entry = cli.currentRawFile.CreateEntry(writePath);
+                using (var stream = entry.Open())
+                {
+                    using (StreamWriter writer = new StreamWriter(stream))
+                    {
+                        writer.Write(contents);
+                    }
+                }
+            }
 
-            cli.Log($"Successfully wrote output file to {finalPath}");
+            cli.Log($"Successfully wrote output file to {finalPath}. Don't forget to COMMIT to validate the changes.");
             return true;
         }
     }

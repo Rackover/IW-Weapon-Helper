@@ -10,49 +10,86 @@ namespace IW_WEAPON_HELPER.Controller
     class Export : Command
     {
         public override string HelpMessage => "Exports the given weapon to either XML or JSON";
-        public override string HelpfulArguments => $@"{"\""}<path\to\weapon\file>{"\""} <format>";
+        public override string HelpfulArguments => $"<path/to/weapon/inside/rawfile> <format>";
 
         public override bool Execute(CommandLineInterface cli, string arguments, out string remainder)
         {
-            string weaponPath = arguments.Split('"')[1];
-            remainder = arguments.Substring(arguments.IndexOf('"', arguments.IndexOf('"') + 1) + 2);
-            int remains = remainder.IndexOf(' ');
-            string format = remains < 0 ? remainder : remainder.Substring(0, remains);
-            remainder = remains < 0 ? string.Empty : remainder.Substring(format.Length+1);
+            string weaponPath = CommandLineInterface.GetFirstString(arguments, out remainder);
+            string format = CommandLineInterface.GetFirstString(remainder, out remainder); 
+
+            /*
+            if (arguments.Length <= secondMarker + 1)
+            {
+                cli.Err("Please supply a valid format for the exported file");
+                remainder = string.Empty;
+                return false;
+            }
+
+            remainder = arguments.Substring(secondMarker + 2);
+            */
+
 
             Model.Weapon weapon;
-            if (!File.Exists(weaponPath))
+            string allText;
+            if (cli.currentRawFile != null)
             {
-                cli.Err($"Could not find the file {weaponPath}");
-                return false;
+                var entry = cli.currentRawFile.GetEntry(weaponPath); 
+                if (entry == null)
+                {
+                    cli.Err($"Could not find the file {weaponPath} in loaded rawfile");
+                    return false;
+                }
+                else
+                {
+                    using (var stream = cli.currentRawFile.GetEntry(weaponPath).Open())
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            allText = reader.ReadToEnd();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (!File.Exists(weaponPath))
+                {
+                    cli.Err($"Could not find the file {weaponPath}");
+                    return false;
+                }
+
+                if (System.IO.Path.GetExtension(weaponPath).Length > 0)
+                {
+                    cli.Err($"Wrong format for file {System.IO.Path.GetFileName(weaponPath)}");
+                    return false;
+                }
+
+                allText = File.ReadAllText(weaponPath);
+
             }
 
-            if (System.IO.Path.GetExtension(weaponPath).Length > 0)
-            {
-                cli.Err($"Wrong format for file {System.IO.Path.GetFileName(weaponPath)}");
-                return false;
-            }
-
-            string allText = File.ReadAllText(weaponPath);
 
             weapon = Model.Weapon.FromIW(allText, cli.Warn);
-            cli.Log($"Successfully loaded {Path.GetFileName(weaponPath)}");
+            cli.Log($"Successfully loaded {System.IO.Path.GetFileName(weaponPath)}");
 
-            var finalPath = weaponPath + "." + format;
+            var finalPath = System.IO.Path.GetFileName(weaponPath) + "." + format;
+            string output;
             switch (format.ToUpper())
             {
                 case "XML":
-                    File.WriteAllText(finalPath, weapon.SerializeToXML());
+                    output = weapon.SerializeToXML();
                     break;
 
                 case "JSON":
-                    File.WriteAllText(finalPath, weapon.SerializeToJSON());
+                    output = weapon.SerializeToJSON();
                     break;
 
                 default:
-                    cli.Err($"No valid output format given for {System.IO.Path.GetFileName(weaponPath)}, will not write anything to disk.");
+                    cli.Err($"No valid output format given for {System.IO.Path.GetFileName(weaponPath)} ({format}), will not write anything to disk.");
                     return false;
             }
+
+            File.WriteAllText(finalPath, output);
 
             cli.Log($"Successfully wrote output file to {finalPath}");
             return true;

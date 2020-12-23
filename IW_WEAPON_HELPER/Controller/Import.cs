@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LouveSystems.CommandLineInterface;
 using System.IO;
 
 namespace IW_WEAPON_HELPER.Controller
@@ -12,16 +8,21 @@ namespace IW_WEAPON_HELPER.Controller
         public override string HelpMessage => "Imports the given weapon from either XML or JSON";
         public override string HelpfulArguments => $"<path/to/exported/file> <output/path/in/iwd/file>";
 
-        public override bool Execute(CommandLineInterface cli, string arguments, out string remainder)
+        public override bool Execute(LouveSystems.CommandLineInterface.CommandLineInterface cli, string arguments, out string remainder)
         {
-            string weaponPath = CommandLineInterface.GetFirstString(arguments, out remainder);
+            return Execute(cli as Interface, arguments, out remainder);
+        }
+
+        bool Execute(Interface cli, string arguments, out string remainder)
+        {
+            string weaponPath = cli.GetFirstString(arguments, out remainder);
             if (weaponPath.Length == 0)
             {
                 cli.Err("Please specify a path to the weapon file to import");
                 return false;
             }
 
-            string writePath = CommandLineInterface.GetFirstString(remainder, out remainder);
+            string writePath = cli.GetFirstString(remainder, out remainder);
             if (writePath.Length == 0)
             {
                 cli.Err("Please specify an output path to write the file either inside the iwd file or on disk");

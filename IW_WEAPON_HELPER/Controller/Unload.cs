@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LouveSystems.CommandLineInterface;
 
 namespace IW_WEAPON_HELPER.Controller
 {
     class Unload : Command
     {
-        public override string HelpMessage => "Unloads the loaded IWD file";
+        public override string HelpMessage => "Unloads the loaded IWD file and writes the change on disk";
         public override string HelpfulArguments => string.Empty;
 
         public override bool Execute(CommandLineInterface cli, string arguments, out string remainder)
+        {
+            return Execute(cli as Interface, arguments, out remainder);
+        }
+
+        bool Execute(Interface cli, string arguments, out string remainder)
         {
             if (cli.currentRawFile == null)
             {

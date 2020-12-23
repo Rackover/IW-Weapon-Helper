@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LouveSystems.CommandLineInterface;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IW_WEAPON_HELPER.Controller
 {
@@ -12,9 +8,14 @@ namespace IW_WEAPON_HELPER.Controller
         public override string HelpMessage => "Loads an IWD in memory";
         public override string HelpfulArguments => "<path/to/iwd/file>";
 
-        public override bool Execute(CommandLineInterface cli, string arguments, out string remainder)
+        public override bool Execute(LouveSystems.CommandLineInterface.CommandLineInterface cli, string arguments, out string remainder)
         {
-            string rawFilePath = CommandLineInterface.GetFirstString(arguments, out remainder);
+            return Execute(cli as Interface, arguments, out remainder);
+        }
+
+        bool Execute(Interface cli, string arguments, out string remainder)
+        {
+            string rawFilePath = cli.GetFirstString(arguments, out remainder);
 
             if (rawFilePath.Length == 0)
             {
@@ -28,7 +29,7 @@ namespace IW_WEAPON_HELPER.Controller
                 cli.currentRawFilePath = rawFilePath;
                 cli.Log($"Successfully opened {rawFilePath} for import/export operations");
             }
-            catch(System.IO.IOException e)
+            catch (System.IO.IOException e)
             {
                 cli.Err(e.ToString());
                 return false;

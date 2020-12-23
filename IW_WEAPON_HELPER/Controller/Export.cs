@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LouveSystems.CommandLineInterface;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IW_WEAPON_HELPER.Controller
 {
@@ -12,39 +8,32 @@ namespace IW_WEAPON_HELPER.Controller
         public override string HelpMessage => "Exports the given weapon to either XML or JSON";
         public override string HelpfulArguments => $"<path/to/weapon/inside/iwd> <format>";
 
-        public override bool Execute(CommandLineInterface cli, string arguments, out string remainder)
+        public override bool Execute(LouveSystems.CommandLineInterface.CommandLineInterface cli, string arguments, out string remainder)
         {
-            string weaponPath = CommandLineInterface.GetFirstString(arguments, out remainder);
+            return Execute(cli as Interface, arguments, out remainder);
+        }
+
+        bool Execute(Interface cli, string arguments, out string remainder)
+        {
+            string weaponPath = cli.GetFirstString(arguments, out remainder);
             if (weaponPath.Length == 0)
             {
                 cli.Err("Please specify a weapon path to export");
                 return false;
             }
 
-            string format = CommandLineInterface.GetFirstString(remainder, out remainder);
+            string format = cli.GetFirstString(remainder, out remainder);
             if (format.Length == 0)
             {
                 cli.Err("Please specify a format for the exported file, either XML or JSON");
                 return false;
             }
 
-            /*
-            if (arguments.Length <= secondMarker + 1)
-            {
-                cli.Err("Please supply a valid format for the exported file");
-                remainder = string.Empty;
-                return false;
-            }
-
-            remainder = arguments.Substring(secondMarker + 2);
-            */
-
-
             Model.Weapon weapon;
             string allText;
             if (cli.currentRawFile != null)
             {
-                var entry = cli.currentRawFile.GetEntry(weaponPath); 
+                var entry = cli.currentRawFile.GetEntry(weaponPath);
                 if (entry == null)
                 {
                     cli.Err($"Could not find the file {weaponPath} in loaded iwd file");

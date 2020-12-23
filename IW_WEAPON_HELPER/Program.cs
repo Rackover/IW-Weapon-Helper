@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IW_WEAPON_HELPER
 {
@@ -12,7 +7,8 @@ namespace IW_WEAPON_HELPER
     {
         static void Main(string[] args)
         {
-            new CommandLineInterface(args);
+            string initialCommand = string.Join(" ", args.Skip(1).ToArray());
+            new IW_WEAPON_HELPER.Interface(initialCommand);
         }
     }
 }

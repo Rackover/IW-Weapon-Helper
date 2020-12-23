@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LouveSystems.CommandLineInterface;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IW_WEAPON_HELPER.Controller
 {
@@ -12,7 +8,7 @@ namespace IW_WEAPON_HELPER.Controller
         public override string HelpMessage => "Shows the current directory path, or changes it";
         public override string HelpfulArguments => "[<new/path>]";
 
-        public override bool Execute(CommandLineInterface cli, string arguments, out string remainder)
+        public override bool Execute(LouveSystems.CommandLineInterface.CommandLineInterface cli, string arguments, out string remainder)
         {
             if (arguments.Length == 0)
             {
@@ -21,7 +17,7 @@ namespace IW_WEAPON_HELPER.Controller
             }
             else
             {
-                var newPath = CommandLineInterface.GetFirstString(arguments, out remainder);
+                var newPath = cli.GetFirstString(arguments, out remainder);
 
                 try
                 {

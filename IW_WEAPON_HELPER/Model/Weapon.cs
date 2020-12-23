@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace IW_WEAPON_HELPER.Model
@@ -636,7 +633,7 @@ namespace IW_WEAPON_HELPER.Model
         public string worldShellEjectEffect = null;
         #endregion
 
-        public static Weapon FromIW(string fileContents, Action<string> logFunction=null)
+        public static Weapon FromIW(string fileContents, Action<string> logFunction = null)
         {
             string[] allLines = fileContents.Split('\n');
             string lastLine = allLines.Last();
@@ -649,7 +646,7 @@ namespace IW_WEAPON_HELPER.Model
             string headerData = string.Join(Environment.NewLine, allLines.Take(allLines.Length - 1)) + Environment.NewLine + lastLine.Substring(0, definitionStart);
 
             var statsArr = definitionLine.Split('\\');
-            var weapon = new Weapon(headerData.Substring(0, headerData.Length-1)); // Just removing the slight "/" at the end of headerdata - we won't need it
+            var weapon = new Weapon(headerData.Substring(0, headerData.Length - 1)); // Just removing the slight "/" at the end of headerdata - we won't need it
             var properties = typeof(Weapon).GetFields();
 
             for (int i = 0; i < statsArr.Length - 1; i += 2)
@@ -688,7 +685,8 @@ namespace IW_WEAPON_HELPER.Model
 
         public static Weapon FromXML(string xmlString)
         {
-            using (var stringReader = new StringReader(xmlString)) {
+            using (var stringReader = new StringReader(xmlString))
+            {
                 return new XmlSerializer(typeof(Weapon)).Deserialize(stringReader) as Weapon;
             }
         }
@@ -730,8 +728,9 @@ namespace IW_WEAPON_HELPER.Model
             }
         }
 
-        private Weapon(string headerData) { 
-            this.headerData = headerData; 
+        private Weapon(string headerData)
+        {
+            this.headerData = headerData;
         }
 
         private Weapon() { }
